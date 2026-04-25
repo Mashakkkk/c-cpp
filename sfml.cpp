@@ -1,23 +1,23 @@
 #include <SFML/Graphics.hpp>
 
-class Point { // создаем абстрактный класс
+class Point {
 public:
     virtual void draw(sf::RenderWindow& window) = 0; 
     virtual void move(float dx, float dy) = 0; 
     virtual void rotate(float angle) = 0; 
-    virtual ~Point() = default; // виртуальный деструктор
+    virtual ~Point() = default;
 };
 
-class Rectangle : public Point { // создаем класс rectangle, наследованный от класса point
+class Rectangle : public Point {
     sf::RectangleShape rectangle;
 public:
-    Rectangle(float x, float y, float w, float h, sf::Color color) { // конструктор
-        rectangle.setSize({ w, h }); // ширина, высота
-        rectangle.setPosition(x, y); // откуда отсчет
-        rectangle.setFillColor(color); // цвет
-        rectangle.setOrigin(w / 2, h / 2); // центр фигуры
+    Rectangle(float x, float y, float w, float h, sf::Color color) {
+        rectangle.setSize({ w, h });
+        rectangle.setPosition(x, y);
+        rectangle.setFillColor(color);
+        rectangle.setOrigin(w / 2, h / 2);
     }
-    void draw(sf::RenderWindow& window) { //функция для отображения фигуры в окне
+    void draw(sf::RenderWindow& window) {
         window.draw(rectangle);
     }
     void move(float dx, float dy) {
@@ -27,13 +27,13 @@ public:
         rectangle.rotate(angle);
     }
     sf::Vector2f getPosition() {
-        return rectangle.getPosition(); // возвращаем текущую позицию
+        return rectangle.getPosition();
     }
 };
 
-class Square : public Rectangle { // квадрат, наследованный от прямоугольника
+class Square : public Rectangle {
 public:
-    Square(float x, float y, float z, sf::Color color) // z-сторона квадрата
+    Square(float x, float y, float z, sf::Color color)
         : Rectangle(x, y, z, z, color) {
     }
 };
@@ -44,17 +44,17 @@ class Rhomb : public Point {
     float rotation = 0;
 public:
     Rhomb(float x, float y, float d1, float d2, sf::Color color) : center_x(x), center_y(y) {
-        rhomb.setPointCount(4); // указываем количество точек, из которых будет состоять фигура
-        rhomb.setPoint(0, sf::Vector2f(0, -d2 / 2)); // верхнаяя точка
-        rhomb.setPoint(1, sf::Vector2f(d1 / 2, 0)); // правая точка
-        rhomb.setPoint(2, sf::Vector2f(0, d2 / 2)); // нижняя точка
-        rhomb.setPoint(3, sf::Vector2f(-d1 / 2, 0)); // левая точка
+        rhomb.setPointCount(4); 
+        rhomb.setPoint(0, sf::Vector2f(0, -d2 / 2));
+        rhomb.setPoint(1, sf::Vector2f(d1 / 2, 0));
+        rhomb.setPoint(2, sf::Vector2f(0, d2 / 2));
+        rhomb.setPoint(3, sf::Vector2f(-d1 / 2, 0));
         rhomb.setFillColor(color);
-        rhomb.setOrigin(0, 0); // фигура появляется из начала координат
-        updatePosition(); // обновляем расположение
+        rhomb.setOrigin(0, 0);
+        updatePosition();
     }
     void updatePosition() {
-        rhomb.setPosition(center_x, center_y); // устанавливаем позицию
+        rhomb.setPosition(center_x, center_y);
         rhomb.setRotation(rotation);
     }
     void draw(sf::RenderWindow& window) {
@@ -79,9 +79,9 @@ class Parallelogram : public Point {
     float center_x, center_y;
     float rotation = 0;
 public:
-    Parallelogram(float x, float y, float d, float h, float shift, sf::Color color): center_x(x), center_y(y) { // присваиваем центру x и y значения x и y соответсвенно
+    Parallelogram(float x, float y, float d, float h, float shift, sf::Color color): center_x(x), center_y(y) { 
         parall.setPointCount(4);
-        parall.setPoint(0, sf::Vector2f(-d / 2 + shift, -h / 2)); // составляем фигуру с учетом смещения
+        parall.setPoint(0, sf::Vector2f(-d / 2 + shift, -h / 2));
         parall.setPoint(1, sf::Vector2f(d / 2 + shift, -h / 2));
         parall.setPoint(2, sf::Vector2f(d / 2 - shift, h / 2));
         parall.setPoint(3, sf::Vector2f(-d / 2 - shift, h / 2));
@@ -111,9 +111,9 @@ public:
 };
 
 class Line : public Point {
-    sf::Vertex line[2]; // массив из двух точек
+    sf::Vertex line[2];
     float rotation = 0;
-    sf::Vector2f center; // центр отрезка
+    sf::Vector2f center;
 public:
     Line(float x1, float y1, float x2, float y2, sf::Color color) {
         line[0] = sf::Vertex(sf::Vector2f(x1, y1), color); 
@@ -133,13 +133,13 @@ public:
     }
     void rotate(float angle) {
         rotation += angle;
-            for (int i = 0; i < 2; ++i) { // для первой и второй точки
-                sf::Vector2f p = line[i].position; // координаты точки
-                float s = sin(angle * 3.14 / 180); // синус угла в радианах
+            for (int i = 0; i < 2; ++i) {
+                sf::Vector2f p = line[i].position;
+                float s = sin(angle * 3.14 / 180);
                 float c = cos(angle * 3.14 / 180);
                 p.x -= center.x; 
                 p.y -= center.y;
-                float xnew = p.x * c - p.y * s; // поворот
+                float xnew = p.x * c - p.y * s;
                 float ynew = p.x * s + p.y * c;
                 line[i].position.x = center.x + xnew; 
                 line[i].position.y = center.y + ynew;
@@ -151,7 +151,7 @@ public:
 };
 
 class Pointt : public Point {
-    sf::CircleShape point; // точка - окружность с маленьким радиусом
+    sf::CircleShape point;
 public:
     Pointt(float x, float y, sf::Color color) {
         point.setRadius(4);
@@ -172,9 +172,9 @@ public:
 };
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(900, 700), "Windoooooooow"); // настройка окна 
+    sf::RenderWindow window(sf::VideoMode(900, 700), "Windoooooooow");
 
-    Point* shapes[6]; // указатель на фигуру
+    Point* shapes[6];
     shapes[0] = new Rectangle(100, 200, 200, 100, sf::Color::White);
     shapes[1] = new Square(500, 50, 80, sf::Color::Cyan);
     shapes[2] = new Pointt(500, 500, sf::Color::White);
@@ -182,11 +182,11 @@ int main() {
     shapes[4] = new Parallelogram(200, 550, 180, 120, 30, sf::Color::White);
     shapes[5] = new Line(10, 10, 150, 150, sf::Color::Cyan);
 
-    float speedX = 20; // скорость по иксу
+    float speedX = 20;
     float speedY = 20; 
     float rotateSpeed = 180; 
 
-    sf::Clock clock; // время
+    sf::Clock clock;
 
     while (window.isOpen()) { 
         sf::Event event;
@@ -194,13 +194,13 @@ int main() {
             if (event.type == sf::Event::Closed)
                 window.close();
 
-        float dt = clock.restart().asSeconds(); // время, прошедшее с последнего действия в окне
+        float dt = clock.restart().asSeconds();
 
-        for (int i = 0; i < 6; i++) { // новый показ фигур
-            shapes[i]->move(speedX * dt, speedY * dt); // перемещаем
-            shapes[i]->rotate(rotateSpeed * dt); // поворачиваем
+        for (int i = 0; i < 6; i++) {
+            shapes[i]->move(speedX * dt, speedY * dt);
+            shapes[i]->rotate(rotateSpeed * dt);
 
-            sf::Vector2f pos; // текущая позиция текущей фигуры
+            sf::Vector2f pos;
             if (auto rectangle = dynamic_cast<Rectangle*>(shapes[i])) pos = rectangle->getPosition();
             else if (auto square = dynamic_cast<Square*>(shapes[i])) pos = square->getPosition();
             else if (auto rhomb = dynamic_cast<Rhomb*>(shapes[i])) pos = rhomb->getPosition();
@@ -209,17 +209,17 @@ int main() {
             else if (auto point = dynamic_cast<Pointt*>(shapes[i])) pos = point->getPosition();
             else pos = { 0, 0 };
 
-            if (pos.x > 900) shapes[i]->move(-900, 0); // возвращаемся влево при выходе за правую границу
-            if (pos.y > 700) shapes[i]->move(0, -700); // возвращаемся вверх при выходе за нижнюю границу
+            if (pos.x > 900) shapes[i]->move(-900, 0);
+            if (pos.y > 700) shapes[i]->move(0, -700);
         }
 
-        window.clear(); // очистка
-        for (int i = 0; i < 6; i++) // рисуем
+        window.clear(); // Г®Г·ГЁГ±ГІГЄГ 
+        for (int i = 0; i < 6; i++) // Г°ГЁГ±ГіГҐГ¬
             shapes[i]->draw(window);
-        window.display(); // отображаем
+        window.display(); // Г®ГІГ®ГЎГ°Г Г¦Г ГҐГ¬
     }
 
-    for (int i = 0; i < 6; i++) // освобождаем память
+    for (int i = 0; i < 6; i++) // Г®Г±ГўГ®ГЎГ®Г¦Г¤Г ГҐГ¬ ГЇГ Г¬ГїГІГј
         delete shapes[i];
 
     return 0;
